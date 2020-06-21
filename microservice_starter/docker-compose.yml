@@ -5,6 +5,9 @@ services:
     image: postgres:13-alpine
     volumes:
       - db-volume:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=6ab0dcc58534b0e98d
   auth_server:
     image: localhost:5000/authentication_server
     command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3000 -b '0.0.0.0'"
@@ -13,7 +16,11 @@ services:
     depends_on:
       - db
     environment:
-      RAILS_MASTER_KEY: a98a67b34b0e98d6ab0dcc585e001eb9
+      - SECRET_KEY_BASE=9e2b9cdec4d84e58bef771ba7bd4b2cc44db8d3947aa3d399b03f6e7520a73b486ecacaa51dd6866425cbc6eec9459aec52b39ceb910e12be82b3e13f9899f1f
+      - DB_DATABASE=microservice_starter
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=6ab0dcc58534b0e98d
+      - DB_HOST=db
   reverse-proxy:
     image: traefik:v2.2
     command: --api.insecure=true --providers.docker
@@ -24,7 +31,7 @@ services:
       - "8080:8080"
     volumes:
       # So that Traefik can listen to the Docker events
-      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/run/docker.sock:/var/run/docker.sock:ro
   whoami:
     # A container that exposes an API to show its IP address
     image: containous/whoami
