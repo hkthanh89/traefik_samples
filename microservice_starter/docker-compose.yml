@@ -29,6 +29,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.middlewares.test-auth.forwardauth.address=http://auth_server:3000/auth/verify"
+      - "traefik.http.middlewares.test-auth.forwardauth.authResponseHeaders=X-Auth-User-Id"
 
   reverse-proxy:
     image: traefik:v2.2
